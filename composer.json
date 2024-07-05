@@ -1,0 +1,35 @@
+{
+    "name": "bangpound/sns",
+    "require": {
+        "aws/aws-php-sns-message-validator": "^1.9",
+        "aws/aws-sdk-php": "^3.315",
+        "psr/container": "^2.0",
+        "psr/log": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bangpound\\Sns\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bangpound\\Sns\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Benjamin J Doherty",
+            "email": "bjd@pobox.com"
+        }
+    ],
+    "require-dev": {
+        "symfony/remote-event": "^7.1",
+        "symfony/http-foundation": "^7.1",
+        "symfony/webhook": "^7.1",
+        "phpunit/phpunit": "^11.2",
+        "symfony/http-client": "^7.1",
+        "symfony/dependency-injection": "^7.1",
+        "symfony/framework-bundle": "^7.1",
+        "colinodell/psr-testlogger": "^1.3"
+    }
+}
