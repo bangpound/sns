@@ -21,52 +21,43 @@ class ConsumerTest extends TestCase
 {
     public function testConsumesSubscriptionConfirmation()
     {
-        $this->expectNotToPerformAssertions();
+        $innerConsumer = $this->createMock(ConsumerInterface::class);
         $consumer = new Consumer(new ServiceLocator([
-            'SubscriptionConfirmation' => function () {
-                return new class () implements ConsumerInterface {
-                    #[\Override]
-                    public function consume(RemoteEvent $event): void
-                    {
-                    }
-                };
-            },
+            'SubscriptionConfirmation' => fn () => $innerConsumer,
         ]));
         $message = include __DIR__.'/../fixtures/sns/subscription_confirmation.php';
-        $consumer->consume(new SubscriptionConfirmation($message));
+        $event = new SubscriptionConfirmation($message);
+
+        $innerConsumer->expects($this->once())->method('consume')->with($event);
+
+        $consumer->consume($event);
     }
 
     public function testConsumesNotification()
     {
-        $this->expectNotToPerformAssertions();
+        $innerConsumer = $this->createMock(ConsumerInterface::class);
         $consumer = new Consumer(new ServiceLocator([
-            'Notification' => function () {
-                return new class () implements ConsumerInterface {
-                    #[\Override]
-                    public function consume(RemoteEvent $event): void
-                    {
-                    }
-                };
-            },
+            'Notification' => fn () => $innerConsumer,
         ]));
         $message = include __DIR__.'/../fixtures/sns/notification.php';
-        $consumer->consume(new Notification($message));
+        $event = new Notification($message);
+
+        $innerConsumer->expects($this->once())->method('consume')->with($event);
+
+        $consumer->consume($event);
     }
 
     public function testConsumesUnsubscribeConfirmation()
     {
-        $this->expectNotToPerformAssertions();
+        $innerConsumer = $this->createMock(ConsumerInterface::class);
         $consumer = new Consumer(new ServiceLocator([
-            'UnsubscribeConfirmation' => function () {
-                return new class () implements ConsumerInterface {
-                    #[\Override]
-                    public function consume(RemoteEvent $event): void
-                    {
-                    }
-                };
-            },
+            'UnsubscribeConfirmation' => fn () => $innerConsumer,
         ]));
         $message = include __DIR__.'/../fixtures/sns/unsubscribe_confirmation.php';
-        $consumer->consume(new UnsubscribeConfirmation($message));
+        $event = new UnsubscribeConfirmation($message);
+
+        $innerConsumer->expects($this->once())->method('consume')->with($event);
+
+        $consumer->consume($event);
     }
 }
