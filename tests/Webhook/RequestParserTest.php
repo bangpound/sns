@@ -153,8 +153,6 @@ EOF;
   "SigningCertURL": "https://sns.us-west-2.amazonaws.com/SimpleNotificationService-f3ecfb7224c7233fe7bb5f59f96de52f.pem"
 }
 EOF;
-        $payload = json_decode($payloadJson, true);
-
         $validator = $this->getMockBuilder(MessageValidator::class)->getMock();
         $validator->expects($this->once())->method('validate')->willThrowException(new InvalidSnsMessageException('The message signature is invalid.'));
 
