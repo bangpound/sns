@@ -13,4 +13,4 @@ return new Message(json_decode(/* @lang json */ '{
   "SignatureVersion": "1",
   "Signature": "EXAMPLEHXgJm...",
   "SigningCertURL": "https://sns.us-west-2.amazonaws.com/SimpleNotificationService-f3ecfb7224c7233fe7bb5f59f96de52f.pem"
-}', true));
+}', true, 512, JSON_THROW_ON_ERROR));
