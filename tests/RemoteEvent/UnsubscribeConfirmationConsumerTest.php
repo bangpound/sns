@@ -19,6 +19,7 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(UnsubscribeConfirmationConsumer::class)]
 #[UsesClass(Message::class)]
 #[UsesClass(RemoteEvent::class)]
+#[UsesClass(UnsubscribeConfirmation::class)]
 class UnsubscribeConfirmationConsumerTest extends TestCase
 {
     private UnsubscribeConfirmationConsumer $consumer;

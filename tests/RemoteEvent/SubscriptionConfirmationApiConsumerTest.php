@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(SubscriptionConfirmationApiConsumer::class)]
 #[UsesClass(Message::class)]
 #[UsesClass(RemoteEvent::class)]
+#[UsesClass(SubscriptionConfirmation::class)]
 #[UsesTrait(Subscribable::class)]
 class SubscriptionConfirmationApiConsumerTest extends TestCase
 {

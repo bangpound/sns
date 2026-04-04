@@ -21,8 +21,11 @@ use Symfony\Component\Webhook\Exception\RejectWebhookException;
 
 #[CoversClass(RequestParser::class)]
 #[UsesClass(Message::class)]
+#[UsesClass(Notification::class)]
 #[UsesClass(RemoteEvent::class)]
 #[UsesClass(SnsHeaderRequestMatcher::class)]
+#[UsesClass(SubscriptionConfirmation::class)]
+#[UsesClass(UnsubscribeConfirmation::class)]
 #[Small]
 class RequestParserTest extends TestCase
 {

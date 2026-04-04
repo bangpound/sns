@@ -19,6 +19,7 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 #[CoversClass(SubscriptionConfirmationHttpGetConsumer::class)]
 #[UsesClass(Message::class)]
 #[UsesClass(RemoteEvent::class)]
+#[UsesClass(SubscriptionConfirmation::class)]
 #[UsesTrait(Subscribable::class)]
 class SubscriptionConfirmationHttpGetConsumerTest extends TestCase
 {
