@@ -3,7 +3,6 @@
 namespace Bangpound\Sns\RemoteEvent;
 
 use Aws\Result;
-use Aws\Sns\Exception\SnsException;
 use Aws\Sns\SnsClient;
 use Override;
 use Psr\Log\LoggerAwareInterface;
@@ -11,8 +10,6 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
-
-use function assert;
 
 class SubscriptionConfirmationApiConsumer implements ConsumerInterface, LoggerAwareInterface
 {
@@ -27,21 +24,23 @@ class SubscriptionConfirmationApiConsumer implements ConsumerInterface, LoggerAw
     #[Override]
     public function consume(RemoteEvent $event): void
     {
-        assert($event instanceof SubscriptionConfirmation);
+        if (!$event instanceof SubscriptionConfirmation) {
+            throw new \InvalidArgumentException(sprintf('Expected %s, got %s.', SubscriptionConfirmation::class, $event::class));
+        }
 
         $this->logger->debug($event->getMessage(), ['sns' => $event->getPayload()]);
         // There are two ways to confirm the subscription, and the method determines how unsubscribes
         // can work. See https://docs.aws.amazon.com/sns/latest/dg/SendMessageToHttp.prepare.html
-        $promise = $this->snsClient->confirmSubscriptionAsync([
-            'AuthenticateOnUnsubscribe' => 'true',
-            'Token' => $event->getToken(),
-            'TopicArn' => $event->getTopicArn(),
-        ]);
-        $promise->then(function (Result $result) {
+        try {
+            $result = $this->snsClient->confirmSubscription([
+                'AuthenticateOnUnsubscribe' => 'true',
+                'Token' => $event->getToken(),
+                'TopicArn' => $event->getTopicArn(),
+            ]);
             $this->logger->notice('Confirmed subscription {SubscriptionArn}', $result->toArray());
-        }, function (SnsException $e) {
+        } catch (\Throwable $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
-        });
-        $result = $promise->wait();
+            throw $e;
+        }
     }
 }

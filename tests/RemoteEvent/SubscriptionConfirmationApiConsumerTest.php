@@ -64,4 +64,31 @@ class SubscriptionConfirmationApiConsumerTest extends TestCase
         $this->assertTrue($this->logger->hasDebugRecords(), 'Expected debug log of SNS message body');
         $this->assertTrue($this->logger->hasNoticeRecords(), 'Expected notice log on successful confirmation');
     }
+
+    public function testConsumeLogsErrorAndPropagatesOnAwsFailure(): void
+    {
+        $remoteEvent = new SubscriptionConfirmation(new Message([
+            'Message' => 'You have chosen to subscribe.',
+            'MessageId' => 'b',
+            'Timestamp' => 'c',
+            'TopicArn' => 'd',
+            'Type' => 'SubscriptionConfirmation',
+            'Subject' => 'f',
+            'Signature' => 'g',
+            'SignatureVersion' => '1',
+            'SigningCertURL' => 'https://sns.us-east-2.amazonaws.com/SimpleNotificationService-01d088a6f77103d0fe307c0069e40ed6.pem',
+            'SubscribeURL' => 'https://www.google.com',
+            'Token' => 'j',
+        ]));
+
+        $this->awsHandler->append(new \RuntimeException('Connection failed'));
+
+        try {
+            $this->subscriptionConfirmationApiConsumer->consume($remoteEvent);
+            $this->fail('Expected exception to propagate');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('Connection failed', $e->getMessage());
+            $this->assertTrue($this->logger->hasErrorRecords(), 'Expected error to be logged before re-throwing');
+        }
+    }
 }
