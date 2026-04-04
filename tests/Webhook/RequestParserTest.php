@@ -139,6 +139,45 @@ EOF;
         $this->assertInstanceOf(UnsubscribeConfirmation::class, $event);
     }
 
+    public function testRejectsNonPostRequest()
+    {
+        $validator = $this->getMockBuilder(MessageValidator::class)->getMock();
+        $validator->expects($this->never())->method('validate');
+
+        $payloadConverter = $this->getMockBuilder(PayloadConverterInterface::class)->getMock();
+        $payloadConverter->expects($this->never())->method('convert');
+
+        $parser = new RequestParser($validator, $payloadConverter);
+
+        $request = Request::create('/', 'GET');
+        $request->headers->set('x-amz-sns-message-type', 'Notification');
+        $request->headers->set('x-amz-sns-message-id', '165545c9-2a5c-472c-8df2-7ff2be2b3b1b');
+        $request->headers->set('x-amz-sns-topic-arn', 'arn:aws:sns:us-west-2:123456789012:MyTopic');
+
+        $this->expectException(RejectWebhookException::class);
+        $parser->parse($request, '');
+    }
+
+    public function testRejectsNonJsonRequest()
+    {
+        $validator = $this->getMockBuilder(MessageValidator::class)->getMock();
+        $validator->expects($this->never())->method('validate');
+
+        $payloadConverter = $this->getMockBuilder(PayloadConverterInterface::class)->getMock();
+        $payloadConverter->expects($this->never())->method('convert');
+
+        $parser = new RequestParser($validator, $payloadConverter);
+
+        $request = Request::create('/', 'POST', [], [], [], [], 'not-json');
+        $request->headers->set('Content-Type', 'text/plain');
+        $request->headers->set('x-amz-sns-message-type', 'Notification');
+        $request->headers->set('x-amz-sns-message-id', '165545c9-2a5c-472c-8df2-7ff2be2b3b1b');
+        $request->headers->set('x-amz-sns-topic-arn', 'arn:aws:sns:us-west-2:123456789012:MyTopic');
+
+        $this->expectException(RejectWebhookException::class);
+        $parser->parse($request, '');
+    }
+
     public function testRejectsMessagesWithIncorrectSignature()
     {
         $payloadJson = /* @lang json */
