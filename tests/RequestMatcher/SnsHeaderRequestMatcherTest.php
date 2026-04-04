@@ -50,4 +50,63 @@ class SnsHeaderRequestMatcherTest extends TestCase
 
         $this->assertTrue($result);
     }
+
+    public function testDoesNotMatchMissingMessageTypeHeader()
+    {
+        $request = Request::create('/');
+        $request->headers->set('x-amz-sns-message-id', '165545c9-2a5c-472c-8df2-7ff2be2b3b1b');
+        $request->headers->set('x-amz-sns-topic-arn', 'arn:aws:sns:us-west-2:123456789012:MyTopic');
+
+        $requestMatcher = new SnsHeaderRequestMatcher();
+
+        $this->assertFalse($requestMatcher->matches($request));
+    }
+
+    public function testDoesNotMatchMissingMessageIdHeader()
+    {
+        $request = Request::create('/');
+        $request->headers->set('x-amz-sns-message-type', 'SubscriptionConfirmation');
+        $request->headers->set('x-amz-sns-topic-arn', 'arn:aws:sns:us-west-2:123456789012:MyTopic');
+
+        $requestMatcher = new SnsHeaderRequestMatcher();
+
+        $this->assertFalse($requestMatcher->matches($request));
+    }
+
+    public function testDoesNotMatchMissingTopicArnHeader()
+    {
+        $request = Request::create('/');
+        $request->headers->set('x-amz-sns-message-type', 'SubscriptionConfirmation');
+        $request->headers->set('x-amz-sns-message-id', '165545c9-2a5c-472c-8df2-7ff2be2b3b1b');
+
+        $requestMatcher = new SnsHeaderRequestMatcher();
+
+        $this->assertFalse($requestMatcher->matches($request));
+    }
+
+    public function testDoesNotMatchInvalidMessageType()
+    {
+        $request = Request::create('/');
+        $request->headers->set('x-amz-sns-message-type', 'UnknownType');
+        $request->headers->set('x-amz-sns-message-id', '165545c9-2a5c-472c-8df2-7ff2be2b3b1b');
+        $request->headers->set('x-amz-sns-topic-arn', 'arn:aws:sns:us-west-2:123456789012:MyTopic');
+        $request->headers->set('x-amz-sns-subscription-arn', 'arn:aws:sns:us-west-2:123456789012:MyTopic:c9135db0-26c4-47ec-8998-413945fb5a96');
+
+        $requestMatcher = new SnsHeaderRequestMatcher();
+
+        $this->assertFalse($requestMatcher->matches($request));
+    }
+
+    public function testDoesNotMatchNotificationWithoutSubscriptionArnHeader()
+    {
+        $request = Request::create('/');
+        $request->headers->set('x-amz-sns-message-type', 'Notification');
+        $request->headers->set('x-amz-sns-message-id', '165545c9-2a5c-472c-8df2-7ff2be2b3b1b');
+        $request->headers->set('x-amz-sns-topic-arn', 'arn:aws:sns:us-west-2:123456789012:MyTopic');
+        // x-amz-sns-subscription-arn intentionally absent
+
+        $requestMatcher = new SnsHeaderRequestMatcher();
+
+        $this->assertFalse($requestMatcher->matches($request));
+    }
 }
