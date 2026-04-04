@@ -9,13 +9,13 @@ use Bangpound\Sns\RemoteEvent\RemoteEvent;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use stdClass;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 #[CoversClass(MessageDecoder::class)]
 #[UsesClass(Message::class)]
 #[UsesClass(RemoteEvent::class)]
-class MessageDecoderTest extends KernelTestCase
+class MessageDecoderTest extends TestCase
 {
     /**
      * @return void
