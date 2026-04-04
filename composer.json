@@ -1,7 +1,10 @@
 {
     "name": "bangpound/sns",
+    "type": "library",
+    "description": "AWS SNS webhook integration for Symfony Webhook and RemoteEvent components",
+    "license": "MIT",
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.4",
         "aws/aws-php-sns-message-validator": "^1.9",
         "aws/aws-sdk-php": "^3.315",
         "psr/container": "^2.0",
