@@ -17,7 +17,7 @@ class FakeCacheHeaderResponseTest extends TestCase
     public function testGetHeadersContainsFakedCacheHeader()
     {
         $response = new FakeCacheHeaderResponse(new MockResponse());
-        $this->assertEquals('public, max-age=2592000, s-maxage=2592000', $response->getHeaders()['cache-control']);
+        $this->assertEquals(['public, max-age=2592000, s-maxage=2592000'], $response->getHeaders()['cache-control']);
     }
 
     public function testGetStatusCode()

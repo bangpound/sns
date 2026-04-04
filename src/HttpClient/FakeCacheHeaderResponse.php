@@ -21,7 +21,7 @@ readonly class FakeCacheHeaderResponse implements ResponseInterface
         $headers = $this->response->getHeaders($throw);
 
         // One month
-        $headers['cache-control'] = 'public, max-age=2592000, s-maxage=2592000';
+        $headers['cache-control'] = ['public, max-age=2592000, s-maxage=2592000'];
 
         return $headers;
     }
