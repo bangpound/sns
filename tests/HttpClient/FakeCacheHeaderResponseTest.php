@@ -43,4 +43,26 @@ class FakeCacheHeaderResponseTest extends TestCase
         $this->assertInstanceOf(FakeCacheHeaderResponse::class, $response);
         $this->assertEquals(['foo' => 'bar'], $response->toArray());
     }
+
+    public function testCancelDelegatesToInnerResponse()
+    {
+        $inner = new MockResponse();
+        $response = new FakeCacheHeaderResponse($inner);
+        $response->cancel();
+        $this->assertTrue($inner->getInfo('canceled'));
+    }
+
+    public function testGetInfoDelegatesToInnerResponse()
+    {
+        $inner = new MockResponse('', ['http_code' => 201]);
+        $response = new FakeCacheHeaderResponse($inner);
+        $this->assertSame(201, $response->getInfo('http_code'));
+    }
+
+    public function testGetInfoWithNullReturnsArray()
+    {
+        $inner = new MockResponse();
+        $response = new FakeCacheHeaderResponse($inner);
+        $this->assertIsArray($response->getInfo(null));
+    }
 }
