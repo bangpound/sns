@@ -31,6 +31,7 @@ class SubscriptionConfirmationApiConsumerTest extends TestCase
         $snsClient = new SnsClient([
             'handler' => $this->awsHandler,
             'region' => 'test',
+            'credentials' => ['key' => 'test', 'secret' => 'test'],
         ]);
         $logger = new TestLogger();
         $this->subscriptionConfirmationApiConsumer = new SubscriptionConfirmationApiConsumer($snsClient);
