@@ -48,6 +48,9 @@ class SubscriptionConfirmationHttpGetConsumerTest extends TestCase
 
         $this->assertTrue($logger->hasInfoRecords());
         $this->assertTrue($logger->hasRecordThatMatches('/sample-message/', LogLevel::DEBUG));
+        $this->assertTrue($logger->hasInfoThatContains('sample-content'), 'Expected HTTP response body to be logged');
+        $this->assertSame('http://sample.com/subscribe', $response->getRequestUrl(), 'Expected GET to SubscribeURL');
+        $this->assertSame('GET', $response->getRequestMethod());
     }
 
 }
