@@ -35,7 +35,13 @@ class Consumer implements ConsumerInterface, LoggerAwareInterface
     #[\Override]
     public function consume(RemoteEvent $event): void
     {
-        \assert($event instanceof SnsRemoteEvent);
+        if (!$event instanceof SnsRemoteEvent) {
+            throw new \InvalidArgumentException(sprintf('Expected %s, got %s.', SnsRemoteEvent::class, $event::class));
+        }
+
+        if (!$this->locator->has($event->getName())) {
+            return;
+        }
 
         /** @var ConsumerInterface $consumer */
         $consumer = $this->locator->get($event->getName());

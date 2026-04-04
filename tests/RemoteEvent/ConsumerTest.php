@@ -17,6 +17,9 @@ use Symfony\Component\RemoteEvent\RemoteEvent;
 #[CoversClass(Consumer::class)]
 #[UsesClass(Message::class)]
 #[UsesClass(\Bangpound\Sns\RemoteEvent\RemoteEvent::class)]
+#[UsesClass(Notification::class)]
+#[UsesClass(SubscriptionConfirmation::class)]
+#[UsesClass(UnsubscribeConfirmation::class)]
 class ConsumerTest extends TestCase
 {
     public function testConsumesSubscriptionConfirmation()
@@ -58,6 +61,26 @@ class ConsumerTest extends TestCase
 
         $innerConsumer->expects($this->once())->method('consume')->with($event);
 
+        $consumer->consume($event);
+    }
+
+    public function testSkipsEventWithNoRegisteredHandler()
+    {
+        $consumer = new Consumer(new ServiceLocator([]));
+        $message = include __DIR__.'/../fixtures/sns/notification.php';
+        $event = new Notification($message);
+
+        // Should not throw even though no handler is registered
+        $consumer->consume($event);
+        $this->addToAssertionCount(1);
+    }
+
+    public function testRejectsNonSnsRemoteEvent()
+    {
+        $consumer = new Consumer(new ServiceLocator([]));
+        $event = new RemoteEvent('some-name', 'some-id', []);
+
+        $this->expectException(\InvalidArgumentException::class);
         $consumer->consume($event);
     }
 }
