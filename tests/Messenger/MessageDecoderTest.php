@@ -58,4 +58,21 @@ class MessageDecoderTest extends TestCase
         $object = $router('arn:aws:sns:us-east-2:826186905853:donation_notifications', null, new Notification($message));
         $this->assertInstanceOf(stdClass::class, $object);
     }
+
+    public function testTopicArnPatternWithForwardSlash()
+    {
+        // A pattern containing / should not break the regex delimiter
+        $router = new MessageDecoder([
+            [
+                'factory' => 'test',
+                'topic_arn' => [
+                    'arn:aws:sns:us-east-2:(?<account_id>\d{12}):(?<topic_name>[\w/\-]+)',
+                ],
+                'subject' => [],
+            ],
+        ], $this->serviceLocator);
+        $message = include __DIR__.'/../fixtures/sns/notification.php';
+        $object = $router('arn:aws:sns:us-east-2:826186905853:donation/notifications', null, new Notification($message));
+        $this->assertInstanceOf(stdClass::class, $object);
+    }
 }

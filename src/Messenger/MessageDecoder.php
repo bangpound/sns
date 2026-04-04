@@ -80,7 +80,12 @@ class MessageDecoder implements LoggerAwareInterface
     private function applyPatternAndBuildMatch(array &$match, string $mappingItem, string $keyItem, string $mappingFactory, string $keyName): void
     {
         $m = [];
-        $matchCount = preg_match(sprintf('/%s/', $mappingItem), $keyItem, $m);
+        $matchCount = preg_match(sprintf('#%s#', $mappingItem), $keyItem, $m);
+        if ($matchCount === false) {
+            $this->logger->error('preg_match failed on pattern {pattern}', ['pattern' => $mappingItem]);
+
+            return;
+        }
         if ($matchCount > 0) {
             $match['factory'] = $mappingFactory;
             $m = array_filter($m, 'is_string', ARRAY_FILTER_USE_KEY);
