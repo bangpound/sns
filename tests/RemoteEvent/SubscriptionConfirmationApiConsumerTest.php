@@ -25,6 +25,7 @@ class SubscriptionConfirmationApiConsumerTest extends TestCase
 {
     private SubscriptionConfirmationApiConsumer $subscriptionConfirmationApiConsumer;
     private MockHandler $awsHandler;
+    private TestLogger $logger;
 
     protected function setUp(): void
     {
@@ -34,16 +35,15 @@ class SubscriptionConfirmationApiConsumerTest extends TestCase
             'region' => 'test',
             'credentials' => ['key' => 'test', 'secret' => 'test'],
         ]);
-        $logger = new TestLogger();
+        $this->logger = new TestLogger();
         $this->subscriptionConfirmationApiConsumer = new SubscriptionConfirmationApiConsumer($snsClient);
-        $this->subscriptionConfirmationApiConsumer->setLogger($logger);
+        $this->subscriptionConfirmationApiConsumer->setLogger($this->logger);
     }
 
-    public function testConsume(): void
+    public function testConsumeLogsDebugMessageAndNoticeOnSuccess(): void
     {
-        $this->expectNotToPerformAssertions();
         $message = new Message([
-            'Message' => 'a',
+            'Message' => 'You have chosen to subscribe.',
             'MessageId' => 'b',
             'Timestamp' => 'c',
             'TopicArn' => 'd',
@@ -57,9 +57,11 @@ class SubscriptionConfirmationApiConsumerTest extends TestCase
         ]);
         $remoteEvent = new SubscriptionConfirmation($message);
 
-        $this->awsHandler->append(new Result([
-        ]));
+        $this->awsHandler->append(new Result(['SubscriptionArn' => 'arn:aws:sns:us-east-1:123456789012:MyTopic:abc123']));
 
         $this->subscriptionConfirmationApiConsumer->consume($remoteEvent);
+
+        $this->assertTrue($this->logger->hasDebugRecords(), 'Expected debug log of SNS message body');
+        $this->assertTrue($this->logger->hasNoticeRecords(), 'Expected notice log on successful confirmation');
     }
 }
