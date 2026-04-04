@@ -14,23 +14,23 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 #[CoversClass(MessageDecoder::class)]
 #[UsesClass(Message::class)]
+#[UsesClass(Notification::class)]
 #[UsesClass(RemoteEvent::class)]
 class MessageDecoderTest extends TestCase
 {
-    /**
-     * @return void
-     */
-    public function testReturnsMessageClassNameFromTopicArn()
-    {
+    private ServiceLocator $serviceLocator;
+    private array $map;
 
-        $serviceLocator = new ServiceLocator([
+    protected function setUp(): void
+    {
+        $this->serviceLocator = new ServiceLocator([
             'test' => function () {
                 return function () {
                     return new stdClass();
                 };
             },
         ]);
-        $router = new MessageDecoder([
+        $this->map = [
             [
                 'factory' => 'test',
                 'topic_arn' => [
@@ -40,9 +40,22 @@ class MessageDecoderTest extends TestCase
                     '(?<subject>.+) Notification',
                 ],
             ],
-        ], $serviceLocator);
+        ];
+    }
+
+    public function testReturnsMessageClassNameFromTopicArn()
+    {
+        $router = new MessageDecoder($this->map, $this->serviceLocator);
         $message = include __DIR__.'/../fixtures/sns/notification.php';
         $object = $router('arn:aws:sns:us-east-2:826186905853:donation_notifications', 'Arbitrary Notification', new Notification($message));
+        $this->assertInstanceOf(stdClass::class, $object);
+    }
+
+    public function testHandlesNullSubject()
+    {
+        $router = new MessageDecoder($this->map, $this->serviceLocator);
+        $message = include __DIR__.'/../fixtures/sns/notification.php';
+        $object = $router('arn:aws:sns:us-east-2:826186905853:donation_notifications', null, new Notification($message));
         $this->assertInstanceOf(stdClass::class, $object);
     }
 }

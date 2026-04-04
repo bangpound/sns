@@ -40,7 +40,7 @@ class MessageDecoder implements LoggerAwareInterface
         \assert(1 === count($matches));
         $match = array_pop($matches);
 
-        return $this->locator->get($match['factory'])($notification, ...$match['topic_arn'], ...$match['subject']);
+        return $this->locator->get($match['factory'])($notification, ...$match['topic_arn'], ...($match['subject'] ?? []));
     }
 
     /**
