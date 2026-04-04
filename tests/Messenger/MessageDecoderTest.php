@@ -59,6 +59,15 @@ class MessageDecoderTest extends TestCase
         $this->assertInstanceOf(stdClass::class, $object);
     }
 
+    public function testThrowsWhenNoMappingMatchesTopic()
+    {
+        $router = new MessageDecoder($this->map, $this->serviceLocator);
+        $message = include __DIR__.'/../fixtures/sns/notification.php';
+
+        $this->expectException(\RuntimeException::class);
+        $router('not-an-arn', 'Some Notification', new Notification($message));
+    }
+
     public function testTopicArnPatternWithForwardSlash()
     {
         // A pattern containing / should not break the regex delimiter

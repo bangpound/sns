@@ -34,7 +34,13 @@ class MessageDecoder implements LoggerAwareInterface
             'subject' => $subject,
             ...$matches,
         ]);
-        \assert(1 === count($matches));
+        if (1 !== count($matches)) {
+            throw new \RuntimeException(sprintf(
+                'Expected exactly 1 routing match for topic ARN "%s", got %d.',
+                $topicArn,
+                count($matches)
+            ));
+        }
         $match = array_pop($matches);
 
         return $this->locator->get($match['factory'])($notification, ...$match['topic_arn'], ...($match['subject'] ?? []));
@@ -61,15 +67,15 @@ class MessageDecoder implements LoggerAwareInterface
         foreach ($mapping['topic_arn'] as $mappingTopicArn) {
             $this->applyPatternAndBuildMatch($match, $mappingTopicArn, $topicArn, $mapping['factory'], 'topic_arn');
         }
-        if (1 === count($mapping['topic_arn'])) {
+        if (1 === count($mapping['topic_arn']) && isset($match['topic_arn'])) {
             $match['arguments'] = $match['topic_arn'][0];
         }
 
-        if ($subject) {
+        if ($subject && isset($match['factory'])) {
             foreach ($mapping['subject'] as $mappingSubject) {
                 $this->applyPatternAndBuildMatch($match, $mappingSubject, $subject, $mapping['factory'], 'subject');
             }
-            if (1 === count($mapping['subject'])) {
+            if (1 === count($mapping['subject']) && isset($match['subject'])) {
                 $match['arguments'] = array_merge($match['arguments'], $match['subject'][0]);
             }
         }
