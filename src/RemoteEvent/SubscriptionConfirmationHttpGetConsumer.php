@@ -10,8 +10,6 @@ use Symfony\Component\RemoteEvent\Consumer\ConsumerInterface;
 use Symfony\Component\RemoteEvent\RemoteEvent;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-use function assert;
-
 class SubscriptionConfirmationHttpGetConsumer implements ConsumerInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -25,7 +23,9 @@ class SubscriptionConfirmationHttpGetConsumer implements ConsumerInterface, Logg
     #[Override]
     public function consume(RemoteEvent $event): void
     {
-        assert($event instanceof SubscriptionConfirmation);
+        if (!$event instanceof SubscriptionConfirmation) {
+            throw new \InvalidArgumentException(sprintf('Expected %s, got %s.', SubscriptionConfirmation::class, $event::class));
+        }
 
         $this->logger->debug($event->getMessage(), ['sns' => $event->getPayload()]);
         // Confirm the subscription by sending a GET request to the SubscribeURL
