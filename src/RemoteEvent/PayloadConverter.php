@@ -17,6 +17,7 @@ class PayloadConverter implements PayloadConverterInterface
             SnsRemoteEvent::SUBSCRIPTION_CONFIRMATION => new SubscriptionConfirmation($message),
             SnsRemoteEvent::NOTIFICATION => new Notification($message),
             SnsRemoteEvent::UNSUBSCRIBE_CONFIRMATION => new UnsubscribeConfirmation($message),
+            default => throw new \UnexpectedValueException(sprintf('Unknown SNS message type "%s".', $message['Type'])),
         };
     }
 }

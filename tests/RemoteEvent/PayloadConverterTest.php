@@ -16,6 +16,22 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(RemoteEvent::class)]
 class PayloadConverterTest extends TestCase
 {
+    public function testRejectsUnknownType()
+    {
+        $payloadConverter = new PayloadConverter();
+        $this->expectException(\UnexpectedValueException::class);
+        $payloadConverter->convert([
+            'Type' => 'SomeFutureType',
+            'MessageId' => '165545c9-2a5c-472c-8df2-7ff2be2b3b1b',
+            'TopicArn' => 'arn:aws:sns:us-west-2:123456789012:MyTopic',
+            'Message' => 'Hello world!',
+            'Timestamp' => '2012-05-02T00:54:06.655Z',
+            'SignatureVersion' => '1',
+            'Signature' => 'EXAMPLE',
+            'SigningCertURL' => 'https://sns.us-west-2.amazonaws.com/SimpleNotificationService-f3ecfb7224c7233fe7bb5f59f96de52f.pem',
+        ]);
+    }
+
     public function testConvertsPayload()
     {
         $payloadConverter = new PayloadConverter();
