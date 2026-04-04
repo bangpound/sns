@@ -1,6 +1,7 @@
 {
     "name": "bangpound/sns",
     "require": {
+        "php": ">=8.2",
         "aws/aws-php-sns-message-validator": "^1.9",
         "aws/aws-sdk-php": "^3.315",
         "psr/container": "^2.0",
@@ -23,13 +24,13 @@
         }
     ],
     "require-dev": {
-        "symfony/remote-event": "^7.1",
-        "symfony/http-foundation": "^7.1",
-        "symfony/webhook": "^7.1",
-        "phpunit/phpunit": "^11.2",
-        "symfony/http-client": "^7.1",
-        "symfony/dependency-injection": "^7.1",
-        "symfony/framework-bundle": "^7.1",
+        "symfony/remote-event": "^7.1 | ^8.0",
+        "symfony/http-foundation": "^7.1 | ^8.0",
+        "symfony/webhook": "^7.1 | ^8.0",
+        "phpunit/phpunit": "^11.2 | ^12.0 | ^13.0",
+        "symfony/http-client": "^7.1 | ^8.0",
+        "symfony/dependency-injection": "^7.1 | ^8.0",
+        "symfony/framework-bundle": "^7.1 | ^8.0",
         "colinodell/psr-testlogger": "^1.3"
     }
 }
