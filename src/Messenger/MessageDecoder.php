@@ -26,9 +26,6 @@ class MessageDecoder implements LoggerAwareInterface
         $this->logger = new NullLogger();
     }
 
-    /**
-     * @throws PcreException
-     */
     public function __invoke(string $topicArn, ?string $subject, Notification $notification): object
     {
         $matches = $this->matches($topicArn, $subject);
@@ -43,9 +40,6 @@ class MessageDecoder implements LoggerAwareInterface
         return $this->locator->get($match['factory'])($notification, ...$match['topic_arn'], ...($match['subject'] ?? []));
     }
 
-    /**
-     * @throws PcreException
-     */
     private function matches(string $topicArn, ?string $subject): array
     {
         $matches = [];
@@ -59,9 +53,6 @@ class MessageDecoder implements LoggerAwareInterface
         return $matches;
     }
 
-    /**
-     * @throws PcreException
-     */
     private function buildMatchFromMapping(array $mapping, string $topicArn, ?string $subject): array
     {
         $match = [
@@ -86,9 +77,6 @@ class MessageDecoder implements LoggerAwareInterface
         return $match;
     }
 
-    /**
-     * @throws PcreException
-     */
     private function applyPatternAndBuildMatch(array &$match, string $mappingItem, string $keyItem, string $mappingFactory, string $keyName): void
     {
         $m = [];
