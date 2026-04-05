@@ -65,6 +65,13 @@ class SubscriptionConfirmationApiConsumerTest extends TestCase
         $this->assertTrue($this->logger->hasNoticeRecords(), 'Expected notice log on successful confirmation');
     }
 
+    public function testRejectsNonSubscriptionConfirmationEvent(): void
+    {
+        $event = new \Symfony\Component\RemoteEvent\RemoteEvent('some-name', 'some-id', []);
+        $this->expectException(\InvalidArgumentException::class);
+        $this->subscriptionConfirmationApiConsumer->consume($event);
+    }
+
     public function testConsumeLogsErrorAndPropagatesOnAwsFailure(): void
     {
         $remoteEvent = new SubscriptionConfirmation(new Message([

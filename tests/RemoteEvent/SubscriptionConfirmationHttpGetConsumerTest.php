@@ -23,6 +23,15 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 #[UsesTrait(Subscribable::class)]
 class SubscriptionConfirmationHttpGetConsumerTest extends TestCase
 {
+    public function testRejectsNonSubscriptionConfirmationEvent(): void
+    {
+        $httpClient = new MockHttpClient();
+        $consumer = new SubscriptionConfirmationHttpGetConsumer($httpClient);
+        $event = new \Symfony\Component\RemoteEvent\RemoteEvent('some-name', 'some-id', []);
+        $this->expectException(\InvalidArgumentException::class);
+        $consumer->consume($event);
+    }
+
     public function testConsume(): void
     {
         $logger = new TestLogger();

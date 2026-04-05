@@ -6,6 +6,7 @@ use Bangpound\Sns\Message;
 use Bangpound\Sns\Messenger\MessageDecoder;
 use Bangpound\Sns\RemoteEvent\Notification;
 use Bangpound\Sns\RemoteEvent\RemoteEvent;
+use ColinODell\PsrTestLogger\TestLogger;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use stdClass;
@@ -66,6 +67,25 @@ class MessageDecoderTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
         $router('not-an-arn', 'Some Notification', new Notification($message));
+    }
+
+    public function testLogsErrorAndSkipsOnInvalidRegexPattern()
+    {
+        $logger = new TestLogger();
+        $router = new MessageDecoder([
+            [
+                'factory' => 'test',
+                'topic_arn' => [
+                    '(?P<invalid',  // unclosed group — invalid regex
+                ],
+                'subject' => [],
+            ],
+        ], $this->serviceLocator);
+        $router->setLogger($logger);
+        $message = include __DIR__.'/../fixtures/sns/notification.php';
+
+        $this->expectException(\RuntimeException::class);
+        $router('arn:aws:sns:us-east-2:826186905853:donation_notifications', null, new Notification($message));
     }
 
     public function testTopicArnPatternWithForwardSlash()
