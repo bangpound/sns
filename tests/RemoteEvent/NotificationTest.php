@@ -61,4 +61,17 @@ class NotificationTest extends TestCase
         $event = new Notification($this->makeMessage(['Subject' => null]));
         $this->assertNull($event->getSubject());
     }
+
+    public function testGetMessage(): void
+    {
+        $event = new Notification($this->makeMessage());
+        $this->assertSame('Hello world!', $event->getMessage());
+    }
+
+    public function testGetTimestamp(): void
+    {
+        $event = new Notification($this->makeMessage());
+        $ts = $event->getTimestamp();
+        $this->assertSame('2012-05-02T00:54:06+00:00', $ts->format(\DateTimeInterface::ATOM));
+    }
 }
