@@ -46,4 +46,22 @@ class SubscriptionConfirmationTest extends TestCase
         $event = new SubscriptionConfirmation($this->makeMessage());
         $this->assertSame('test-token', $event->getToken());
     }
+
+    public function testGetSignatureVersion(): void
+    {
+        $event = new SubscriptionConfirmation($this->makeMessage());
+        $this->assertSame('1', $event->getSignatureVersion());
+    }
+
+    public function testGetSignature(): void
+    {
+        $event = new SubscriptionConfirmation($this->makeMessage());
+        $this->assertSame('EXAMPLE==', $event->getSignature());
+    }
+
+    public function testGetSigningCertUrl(): void
+    {
+        $event = new SubscriptionConfirmation($this->makeMessage());
+        $this->assertSame('https://sns.us-west-2.amazonaws.com/SimpleNotificationService.pem', $event->getSigningCertUrl());
+    }
 }
