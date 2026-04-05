@@ -2,11 +2,6 @@
 
 namespace Bangpound\Sns\RemoteEvent;
 
-/**
- * @todo Why even have this trait? We aren't validating the signatures ourselves.
- *
- * @codeCoverageIgnore
- */
 trait SignedMessage
 {
     public function getSignatureVersion(): string

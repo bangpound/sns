@@ -8,6 +8,7 @@ use Bangpound\Sns\RemoteEvent\RemoteEvent;
 use Bangpound\Sns\RemoteEvent\SignedMessage;
 use Bangpound\Sns\RemoteEvent\Unsubscribable;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\UsesTrait;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(RemoteEvent::class)]
 #[UsesClass(Message::class)]
 #[UsesTrait(SignedMessage::class)]
-#[UsesTrait(Unsubscribable::class)]
+#[CoversTrait(Unsubscribable::class)]
 class NotificationTest extends TestCase
 {
     private function makeMessage(array $overrides = []): Message
@@ -73,5 +74,11 @@ class NotificationTest extends TestCase
         $event = new Notification($this->makeMessage());
         $ts = $event->getTimestamp();
         $this->assertSame('2012-05-02T00:54:06+00:00', $ts->format(\DateTimeInterface::ATOM));
+    }
+
+    public function testGetUnsubscribeUrl(): void
+    {
+        $event = new Notification($this->makeMessage());
+        $this->assertSame('https://sns.us-west-2.amazonaws.com/?Action=Unsubscribe', $event->getUnsubscribeURL());
     }
 }
