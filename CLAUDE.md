@@ -25,7 +25,14 @@ PHPUnit is configured strictly: `requireCoverageMetadata=true`, `failOnRisky=tru
 
 ## Development Process
 
-Use test-driven development: write the test first, confirm it fails, then implement. This project enforces coverage metadata, so every new class needs a corresponding test with `#[CoversClass]` before implementation begins.
+**TDD is mandatory.** Every new feature or bug fix must follow red-green-refactor:
+1. Write a failing test first and confirm it fails for the right reason
+2. Write the minimal source code to make it pass
+3. Refactor if needed, keeping tests green
+
+Never write production code without a failing test already in place. This project enforces coverage metadata, so every new class needs a corresponding test with `#[CoversClass]` before implementation begins.
+
+**Never commit directly to `main`.** All changes — features, bug fixes, and refactors — must go through a pull request. Create a branch, open a PR, and get it reviewed before merging.
 
 ## Architecture
 
